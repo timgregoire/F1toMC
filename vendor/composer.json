@@ -1,0 +1,11 @@
+{
+    "name": "fellowshipone/f1api-php",
+    "type": "library",
+    "description": "Client library for FellowshipOne API",
+    "keywords": ["fellowshipone", "api", "oauth"],
+    "homepage": "https://github.com/fellowshiptech/f1api-php5",
+    "require": {
+        "php": ">=5.3.3",
+        "ext-oauth": "*"
+    }
+}
