@@ -11,22 +11,40 @@ include 'login.php';
 $f1 = new F1\API($settings);
 $f1->login2ndParty($settings['username'], $settings['password']);
 $MailChimp = new MailChimp($MCKey);
-print_r("Made it");
+
+
+/*
+$Data = $f1->people()->search(array(
+    //'attribute' => $AttID,
+    //'recordsPerPage' => 100,
+    'searchFor' => 'Gregoire',
+    'include'=> 'communications,attributes',
+  ))->get();
+*/
+//$t = $f1->people()->attributegroups('60606')->attributes()->list()->get();
+//var_dump($t);
+
 
 
 $ChimpRawData = $MailChimp->get("lists/$list_id/members?offset=0&count=10000");
 $ChimpDownload = array();
 $F1DownloadedData = array();
 
-$indivByEmail = downloadF1Data(700162);
-$indivByBoth = downloadF1Data(700161);
-$family = downloadF1Data(700159);
+$indivByEmail = downloadF1Data(761700);
+$indivByBoth = downloadF1Data(761699);
+$family = downloadF1Data(761697);
+$familyByBoth = downloadF1Data(769054);
 
 buildCompareList($indivByEmail);
 buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
+buildFamilyCompareList($familyByBoth);
+
 
 buildChimpList($ChimpRawData);
+
+//print_r($F1DownloadedData);
+
 
 compareAndUpload($F1DownloadedData,$ChimpDownload);
 
@@ -47,10 +65,12 @@ function downloadF1Data($AttID)
       {
           $Data = $f1->people()->search(array(
           	  'attribute' => $AttID,
+              'searchFor' => 'David Abernathy',
           		'recordsPerPage' => 100,
               'page' => $i,
           		'include'=> 'communications,attributes',
           	))->get();
+            print_r($Data);
           $AllData[] = $Data;
       }
 
@@ -203,7 +223,7 @@ function compareAndUpload($F1DownloadedData, $ChimpDownload)
     														'email_address' => $current_indiv['Email'],
     														'status'        => 'subscribed',
     												]);
-
+                //  print_r($upload_result);
     						if($upload_result["status"] != "400")
     							{
     									$subscriber_hash = $MailChimp->subscriberHash($current_indiv['Email']);
@@ -211,7 +231,9 @@ function compareAndUpload($F1DownloadedData, $ChimpDownload)
     									$result = $MailChimp->patch("lists/$list_id/members/$subscriber_hash", [
     																	'merge_fields' => ['FNAME'=> $current_indiv['firstname'] , 'LNAME'=>$current_indiv['lastname'], 'F1ID' =>$current_indiv['F1ID']],
     															]);
+                                  //  print_r($result);
     							}
+
     							$current_indiv['ExistsInChimp'] = 'True';
     							$current_indiv['F1Verify'] = 'True';
     				}
@@ -279,6 +301,8 @@ function compareAndUpload($F1DownloadedData, $ChimpDownload)
     			$result = $MailChimp->delete("lists/$list_id/members/$subscriber_hash");
     		}
     	}
+
+
   }
 
 ?>
