@@ -141,17 +141,11 @@ function buildFamilyCompareList($family)
 
   foreach($family as $familyMember)
   {
-    //check if head of household has email in DB
-    //if head has email, email them
-    //if not, check if spouse has email
-    //if they dont, skip
-
-    //Sort each person into array by household
 
 
+      $household_status = $familyMember['householdMemberType']['name'];
       $first_name = $familyMember['firstName'];
       $last_name = $familyMember['lastName'];
-      $email = $familyMember['communications']['communication']['0']['communicationValue'];
       $household_ID = $familyMember['@householdID'];
       $id = $familyMember["@id"];
 
@@ -160,6 +154,7 @@ function buildFamilyCompareList($family)
       {
         if($person['communicationGeneralType'] == "Email")
           {
+              $email = $person['communicationValue'];
               $FamilyCompare[$household_ID][] = array(
                                           'householdStatus' => $household_status,
                                           'firstname' => $first_name,
@@ -177,6 +172,7 @@ function buildFamilyCompareList($family)
         $email = "";
   }
   print_r($FamilyCompare);
+  print_r(sizeOf($FamilyCompare));
 }
 
 function buildChimpList($ChimpRawData)
