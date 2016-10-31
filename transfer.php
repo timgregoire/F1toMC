@@ -13,14 +13,14 @@ $f1->login2ndParty($settings['username'], $settings['password']);
 $MailChimp = new MailChimp($MCKey);
 
 
-/*
+
 $Data = $f1->people()->search(array(
     //'attribute' => $AttID,
     //'recordsPerPage' => 100,
     'searchFor' => 'Gregoire',
     'include'=> 'communications,attributes',
   ))->get();
-*/
+
 //$t = $f1->people()->attributegroups('60606')->attributes()->list()->get();
 //var_dump($t);
 
