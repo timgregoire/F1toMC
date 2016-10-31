@@ -29,6 +29,7 @@ $MailChimp = new MailChimp($MCKey);
 $ChimpRawData = $MailChimp->get("lists/$list_id/members?offset=0&count=10000");
 $ChimpDownload = array();
 $F1DownloadedData = array();
+$FamilyCompare = array();
 
 //$indivByEmail = downloadF1Data(761700);
 //$indivByBoth = downloadF1Data(761699);
@@ -39,6 +40,9 @@ $family = downloadF1Data(761697);
 //buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
 //buildFamilyCompareList($familyByBoth);
+
+//print_r($family);
+
 
 
 //buildChimpList($ChimpRawData);
@@ -65,12 +69,12 @@ function downloadF1Data($AttID)
       {
           $Data = $f1->people()->search(array(
           	  'attribute' => $AttID,
-              'searchFor' => 'David Abernathy',
+          //  'searchFor' => 'Tim Gregoire',
           		'recordsPerPage' => 100,
               'page' => $i,
           		'include'=> 'communications,attributes',
           	))->get();
-            print_r($Data);
+          //  print_r($Data);
           $AllData[] = $Data;
       }
 
@@ -133,6 +137,7 @@ function buildCompareList($unprocessedNames)
 function buildFamilyCompareList($family)
 {
   global $F1DownloadedData;
+  global $FamilyCompare;
 
   foreach($family as $familyMember)
   {
@@ -140,29 +145,38 @@ function buildFamilyCompareList($family)
     //if head has email, email them
     //if not, check if spouse has email
     //if they dont, skip
-  	$household_status = $familyMember['householdMemberType']['name'];
 
-  	if($household_status == "Head")
-  	{
-  		$comm_type = $familyMember['communications']['communication']['0']['communicationGeneralType'];
-  				if($comm_type == "Email")
-  				{
-  					$first_name = $familyMember['firstName'];
-  					$last_name = $familyMember['lastName'];
-  					$email = $familyMember['communications']['communication']['0']['communicationValue'];
-  					//$household_ID = $person['@householdID'];
-  					$id = $familyMember["@id"];
-  					$F1DownloadedData[] = array('firstname' => $first_name,
-  																			'lastname' => $last_name,
-  																			 'Email' => $email,
-  																		   'F1ID' => $id,
-  																			 	'F1Verify' => 'False',
-  																				'ExistsInChimp' => 'False'
-  											  					 			);
+    //Sort each person into array by household
 
-  				}
-  			}
+
+      $first_name = $familyMember['firstName'];
+      $last_name = $familyMember['lastName'];
+      $email = $familyMember['communications']['communication']['0']['communicationValue'];
+      $household_ID = $familyMember['@householdID'];
+      $id = $familyMember["@id"];
+
+
+      foreach($familyMember['communications']['communication'] as $person)
+      {
+        if($person['communicationGeneralType'] == "Email")
+          {
+              $FamilyCompare[$household_ID][] = array(
+                                          'householdStatus' => $household_status,
+                                          'firstname' => $first_name,
+                                          'lastname' => $last_name,
+                                           'Email' => $email,
+                                           'F1ID' => $id,
+                                            );
+          }
+      }
+
+
+        $first_name = "";
+        $last_name = "";
+        $id = "";
+        $email = "";
   }
+  print_r($FamilyCompare);
 }
 
 function buildChimpList($ChimpRawData)
