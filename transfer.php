@@ -14,13 +14,13 @@ $MailChimp = new MailChimp($MCKey);
 
 
 
-$Data = $f1->people()->search(array(
+/*$Data = $f1->people()->search(array(
     //'attribute' => $AttID,
     //'recordsPerPage' => 100,
     'searchFor' => 'Gregoire',
     'include'=> 'communications,attributes',
   ))->get();
-
+*/
 //$t = $f1->people()->attributegroups('60606')->attributes()->list()->get();
 //var_dump($t);
 
@@ -30,18 +30,18 @@ $ChimpRawData = $MailChimp->get("lists/$list_id/members?offset=0&count=10000");
 $ChimpDownload = array();
 $F1DownloadedData = array();
 
-$indivByEmail = downloadF1Data(761700);
-$indivByBoth = downloadF1Data(761699);
+//$indivByEmail = downloadF1Data(761700);
+//$indivByBoth = downloadF1Data(761699);
 $family = downloadF1Data(761697);
-$familyByBoth = downloadF1Data(769054);
+//$familyByBoth = downloadF1Data(769054);
 
-buildCompareList($indivByEmail);
-buildCompareList($indivByBoth);
+//buildCompareList($indivByEmail);
+//buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
-buildFamilyCompareList($familyByBoth);
+//buildFamilyCompareList($familyByBoth);
 
 
-buildChimpList($ChimpRawData);
+//buildChimpList($ChimpRawData);
 
 //print_r($F1DownloadedData);
 
@@ -136,6 +136,10 @@ function buildFamilyCompareList($family)
 
   foreach($family as $familyMember)
   {
+    //check if head of household has email in DB
+    //if head has email, email them
+    //if not, check if spouse has email
+    //if they dont, skip
   	$household_status = $familyMember['householdMemberType']['name'];
 
   	if($household_status == "Head")
