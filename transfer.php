@@ -151,28 +151,45 @@ function buildFamilyCompareList($family)
 
 
       foreach($familyMember['communications']['communication'] as $person)
-      {
-        if($person['communicationGeneralType'] == "Email")
-          {
-              $email = $person['communicationValue'];
-              $FamilyCompare[$household_ID][] = array(
-                                          'householdStatus' => $household_status,
-                                          'firstname' => $first_name,
-                                          'lastname' => $last_name,
-                                           'Email' => $email,
-                                           'F1ID' => $id,
-                                            );
-          }
-      }
+        {
+          if($person['communicationGeneralType'] == "Email")
+            {
+                $email = $person['communicationValue'];
+                $FamilyCompare[$household_ID][] = array(
+                                            'householdStatus' => $household_status,
+                                            'firstname' => $first_name,
+                                            'lastname' => $last_name,
+                                             'Email' => $email,
+                                             'F1ID' => $id,
+                                              );
+            }
+            $first_name = "";
+            $last_name = "";
+            $id = "";
+            $email = "";
+
+        }
 
 
-        $first_name = "";
-        $last_name = "";
-        $id = "";
-        $email = "";
+
+
+
+
+
+
+
+
   }
-  print_r($FamilyCompare);
-  print_r(sizeOf($FamilyCompare));
+
+  foreach($FamilyCompare as $person)
+    {
+      print_r($person);
+    }
+
+
+
+  //print_r($FamilyCompare);
+  //print_r(sizeOf($FamilyCompare));
 }
 
 function buildChimpList($ChimpRawData)
