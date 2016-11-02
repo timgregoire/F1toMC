@@ -31,26 +31,29 @@ $ChimpDownload = array();
 $F1DownloadedData = array();
 $FamilyCompare = array();
 
-//$indivByEmail = downloadF1Data(761700);
-//$indivByBoth = downloadF1Data(761699);
+$indivByEmail = downloadF1Data(761700);
+$indivByBoth = downloadF1Data(761699);
 $family = downloadF1Data(761697);
-//$familyByBoth = downloadF1Data(769054);
+$familyByBoth = downloadF1Data(769054);
 
-//buildCompareList($indivByEmail);
-//buildCompareList($indivByBoth);
+buildCompareList($indivByEmail);
+buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
-//buildFamilyCompareList($familyByBoth);
+buildFamilyCompareList($familyByBoth);
 
+
+print_r($F1DownloadedData);
 //print_r($family);
 
 
+buildChimpList($ChimpRawData);
 
-//buildChimpList($ChimpRawData);
+//print_r($ChimpDownload);
 
 //print_r($F1DownloadedData);
 
 
-compareAndUpload($F1DownloadedData,$ChimpDownload);
+//compareAndUpload($F1DownloadedData,$ChimpDownload);
 
 
 function downloadF1Data($AttID)
@@ -115,6 +118,7 @@ function buildCompareList($unprocessedNames)
     	        if($comm['communicationType']['name'] == "Email")
     						{
     		            $email = $comm['communicationValue'];
+                    $email = str_replace(' ','',$email);
     	        	}
         		}
 
@@ -142,7 +146,7 @@ function buildFamilyCompareList($family)
   foreach($family as $familyMember)
   {
 
-
+    //  print_r($familyMember);
       $household_status = $familyMember['householdMemberType']['name'];
       $first_name = $familyMember['firstName'];
       $last_name = $familyMember['lastName'];
@@ -155,6 +159,7 @@ function buildFamilyCompareList($family)
           if($person['communicationGeneralType'] == "Email")
             {
                 $email = $person['communicationValue'];
+                $email = str_replace(' ','',$email);
                 $FamilyCompare[$household_ID][] = array(
                                             'householdStatus' => $household_status,
                                             'firstname' => $first_name,
@@ -163,33 +168,77 @@ function buildFamilyCompareList($family)
                                              'F1ID' => $id,
                                               );
             }
-            $first_name = "";
-            $last_name = "";
-            $id = "";
-            $email = "";
+
+        }
+
+        $first_name = "";
+        $last_name = "";
+        $id = "";
+        $email = "";
+
+  }
+
+
+      foreach($FamilyCompare as $Family)
+        {
+          if(sizeOf($Family) == 1)
+            {
+                  $email = $Family[0]['Email'];
+                  $email = str_replace(' ','',$email);
+    				      $F1DownloadedData[] = array('firstname' => $Family[0]['firstname'],
+          																		'lastname' => $Family[0]['lastname'],
+          																    'Email' => $email,
+          																   	'F1ID' => $Family[0]['F1ID'],
+          																		'F1Verify' => 'False',
+          																		'ExistsInChimp' => 'False'
+                                            );
+            }
+
+          if(sizeOf($Family) > 1)
+            {
+              $status = False;
+              foreach($Family as $Person)
+                {
+                  if($Person['householdStatus'] == 'Head' && $status == False)
+                    {
+                      $email = $Person['Email'];
+                      $email = str_replace(' ','',$email);
+                      $F1DownloadedData[] = array('firstname' => $Person['firstname'],
+              																		'lastname' => $Person['lastname'],
+              																    'Email' => $email,
+              																   	'F1ID' => $Person['F1ID'],
+              																		'F1Verify' => 'False',
+              																		'ExistsInChimp' => 'False'
+                                                );
+                      $status = True;
+
+
+                    }
+                    else
+                      {
+                        if($Person['householdStatus'] == 'Spouse' && $status == False)
+                          {
+                            $email = $Person['Email'];
+                            $email = str_replace(' ','',$email);
+                            $F1DownloadedData[] = array('firstname' => $Person['firstname'],
+                                                        'lastname' => $Person['lastname'],
+                                                        'Email' => $email,
+                                                        'F1ID' => $Person['F1ID'],
+                                                        'F1Verify' => 'False',
+                                                        'ExistsInChimp' => 'False'
+                                                      );
+                            $status = True;
+                          }
+
+                      }
+                }
+            }
 
         }
 
 
 
 
-
-
-
-
-
-
-  }
-
-  foreach($FamilyCompare as $person)
-    {
-      print_r($person);
-    }
-
-
-
-  //print_r($FamilyCompare);
-  //print_r(sizeOf($FamilyCompare));
 }
 
 function buildChimpList($ChimpRawData)
