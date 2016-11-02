@@ -13,17 +13,19 @@ $f1->login2ndParty($settings['username'], $settings['password']);
 $MailChimp = new MailChimp($MCKey);
 
 
-
-/*$Data = $f1->people()->search(array(
+/*
+$Data = $f1->people()->search(array(
     //'attribute' => $AttID,
     //'recordsPerPage' => 100,
-    'searchFor' => 'Gregoire',
+    'searchFor' => 'Anne Gaushell',
     'include'=> 'communications,attributes',
   ))->get();
-*/
+
 //$t = $f1->people()->attributegroups('60606')->attributes()->list()->get();
 //var_dump($t);
+print_r($Data);
 
+*/
 
 
 $ChimpRawData = $MailChimp->get("lists/$list_id/members?offset=0&count=10000");
@@ -31,22 +33,21 @@ $ChimpDownload = array();
 $F1DownloadedData = array();
 $FamilyCompare = array();
 
-$indivByEmail = downloadF1Data(761700);
-$indivByBoth = downloadF1Data(761699);
+//$indivByEmail = downloadF1Data(761700);
+//$indivByBoth = downloadF1Data(761699);
 $family = downloadF1Data(761697);
-$familyByBoth = downloadF1Data(769054);
+//$familyByBoth = downloadF1Data(769054);
 
-buildCompareList($indivByEmail);
-buildCompareList($indivByBoth);
+//buildCompareList($indivByEmail);
+//buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
-buildFamilyCompareList($familyByBoth);
-
+//buildFamilyCompareList($familyByBoth);
 
 print_r($F1DownloadedData);
 //print_r($family);
 
 
-buildChimpList($ChimpRawData);
+//buildChimpList($ChimpRawData);
 
 //print_r($ChimpDownload);
 
@@ -115,7 +116,7 @@ function buildCompareList($unprocessedNames)
         $communication = $communications['communication'];
         foreach($communication as $comm)
     				{
-    	        if($comm['communicationType']['name'] == "Email")
+    	        if($comm['communicationType']['name'] == "Email" || $comm['communicationGeneralType']  == "Email")
     						{
     		            $email = $comm['communicationValue'];
                     $email = str_replace(' ','',$email);
