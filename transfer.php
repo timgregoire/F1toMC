@@ -33,17 +33,17 @@ $ChimpDownload = array();
 $F1DownloadedData = array();
 $FamilyCompare = array();
 
-//$indivByEmail = downloadF1Data(761700);
-//$indivByBoth = downloadF1Data(761699);
+$indivByEmail = downloadF1Data(761700);
+$indivByBoth = downloadF1Data(761699);
 $family = downloadF1Data(761697);
-//$familyByBoth = downloadF1Data(769054);
+$familyByBoth = downloadF1Data(769054);
 
-//buildCompareList($indivByEmail);
-//buildCompareList($indivByBoth);
+buildCompareList($indivByEmail);
+buildCompareList($indivByBoth);
 buildFamilyCompareList($family);
-//buildFamilyCompareList($familyByBoth);
+buildFamilyCompareList($familyByBoth);
 
-print_r($F1DownloadedData);
+//print_r($F1DownloadedData);
 //print_r($family);
 
 
@@ -54,7 +54,7 @@ print_r($F1DownloadedData);
 //print_r($F1DownloadedData);
 
 
-//compareAndUpload($F1DownloadedData,$ChimpDownload);
+compareAndUpload($F1DownloadedData,$ChimpDownload);
 
 
 function downloadF1Data($AttID)
@@ -123,7 +123,7 @@ function buildCompareList($unprocessedNames)
     	        	}
         		}
 
-    				$F1DownloadedData[] = array('firstname' => $first_name,
+    				$F1DownloadedData[$id] = array('firstname' => $first_name,
     																		   'lastname' => $last_name,
     																		   'Email' => $email,
     																	   	'F1ID' => $id,
@@ -186,7 +186,7 @@ function buildFamilyCompareList($family)
             {
                   $email = $Family[0]['Email'];
                   $email = str_replace(' ','',$email);
-    				      $F1DownloadedData[] = array('firstname' => $Family[0]['firstname'],
+    				      $F1DownloadedData[$Family[0]['F1ID']] = array('firstname' => $Family[0]['firstname'],
           																		'lastname' => $Family[0]['lastname'],
           																    'Email' => $email,
           																   	'F1ID' => $Family[0]['F1ID'],
@@ -204,7 +204,7 @@ function buildFamilyCompareList($family)
                     {
                       $email = $Person['Email'];
                       $email = str_replace(' ','',$email);
-                      $F1DownloadedData[] = array('firstname' => $Person['firstname'],
+                      $F1DownloadedData[$Family[0]['F1ID']] = array('firstname' => $Person['firstname'],
               																		'lastname' => $Person['lastname'],
               																    'Email' => $email,
               																   	'F1ID' => $Person['F1ID'],
@@ -221,7 +221,7 @@ function buildFamilyCompareList($family)
                           {
                             $email = $Person['Email'];
                             $email = str_replace(' ','',$email);
-                            $F1DownloadedData[] = array('firstname' => $Person['firstname'],
+                            $F1DownloadedData[$Family[0]['F1ID']] = array('firstname' => $Person['firstname'],
                                                         'lastname' => $Person['lastname'],
                                                         'Email' => $email,
                                                         'F1ID' => $Person['F1ID'],
