@@ -1,5 +1,7 @@
 <?php
 
+//working as of 4/1/17
+
 session_start();
 require_once('src/fellowshipone/api.php');
 include 'src/mailchimp/MailChimp.php';
